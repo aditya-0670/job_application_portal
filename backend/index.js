@@ -24,8 +24,10 @@ app.disable('x-powered-by');
 // CORS configuration
 const allowedOrigins = [
   'http://localhost:5173', // For local development
-  // Add your Netlify domain here after deployment
-  // 'https://your-netlify-app.netlify.app'
+  'https://job-application-portal-r5ds.onrender.com', // Your Render backend
+  // Add your Netlify frontend URL here after deployment
+  // 'https://your-netlify-app.netlify.app',
+  // 'http://localhost:3000' // If you test frontend build locally
 ];
 
 app.use(cors({
@@ -65,14 +67,26 @@ app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 
-// Only serve static files in production
+// API-only mode - no static file serving
 if (process.env.NODE_ENV === 'production') {
-  const __dirname = path.resolve();
-  app.use(express.static(path.join(__dirname, "/frontend/dist")));
-
-  // Handle React routing, return all requests to React app
+  // Health check endpoint
+  app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'ok', message: 'API is running' });
+  });
+  
+  // Catch-all for non-API routes
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
+    res.status(404).json({
+      status: 'error',
+      message: 'Not Found',
+      documentation: 'This is an API-only service. Please use the frontend application.',
+      apiEndpoints: {
+        user: '/api/v1/user',
+        company: '/api/v1/company',
+        job: '/api/v1/job',
+        application: '/api/v1/application'
+      }
+    });
   });
 }
 
