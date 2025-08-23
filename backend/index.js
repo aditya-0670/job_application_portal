@@ -25,9 +25,8 @@ app.disable('x-powered-by');
 const allowedOrigins = [
   'http://localhost:5173', // For local development
   'https://job-application-portal-r5ds.onrender.com', // Your Render backend
-  // Add your Netlify frontend URL here after deployment
-  // 'https://your-netlify-app.netlify.app',
-  // 'http://localhost:3000' // If you test frontend build locally
+  'https://seekjob.netlify.app', // Your Netlify frontend
+  'https://*.netlify.app' // Allow all Netlify preview deployments
 ];
 
 app.use(cors({
